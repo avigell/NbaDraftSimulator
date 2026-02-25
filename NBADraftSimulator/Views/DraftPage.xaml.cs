@@ -24,7 +24,8 @@ namespace NBADraftSimulator.Views
             // Prepara UI
             btnProssimaScelta.IsVisible = true;
             lblFineDraft.IsVisible = false;
-            lblNumeroScelta.Text = "Pick #1";
+            //int prossimoNumeroDaMostrare = totaleSquadre - _draftService.NumeroSceltaCorrente + 1;
+            //lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
         }
 
         private async void OnProssimaSceltaClicked(object sender, EventArgs e)
@@ -37,21 +38,28 @@ namespace NBADraftSimulator.Views
                 btnProssimaScelta.IsVisible = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
-                int numeroScelta = _draftService.NumeroSceltaCorrente - 1;
 
-                await MostraSceltaConSuspence(squadra, numeroScelta);
+                // CALCOLO CORRETTO per il numero di scelta
+                int totaleSquadre = _squadre.Count;
+                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1; // Questo va da 1 a 8
+                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente + 1; // Inverte: 1→8, 2→7, ecc.
+
+                await MostraSceltaConSuspence(squadra, numeroSceltaDaMostrare);
 
                 _staAnimando = false;
 
-                // Mostra bottone se ci sono altre scelte
                 if (_draftService.HaProssimaScelta())
                 {
                     btnProssimaScelta.IsVisible = true;
-                    lblNumeroScelta.Text = $"Pick #{_draftService.NumeroSceltaCorrente}";
+
+                    // Aggiorna il numero nell'header per la PROSSIMA scelta
+                    int prossimaScelta = _draftService.NumeroSceltaCorrente;
+                    int prossimoNumeroDaMostrare = totaleSquadre - prossimaScelta + 1;
+                    lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
                 }
                 else
                 {
-                    // Draft completato
+                    // Draft completato!
                     lblFineDraft.IsVisible = true;
                     lblNumeroScelta.Text = "DRAFT COMPLETATO!";
                 }
