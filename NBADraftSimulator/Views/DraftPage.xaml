@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NBADraftSimulator.Views.DraftPage"
+             Title="NBA Draft"
+             BackgroundColor="#0A0A0A">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Draft -->
+        <Grid BackgroundColor="#1D428A" Padding="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Source="nba_logo.png" 
+                   WidthRequest="30" HeightRequest="30"/>
+
+            <Label Grid.Column="1" 
+                   Text="DRAFT 2024"
+                   TextColor="White"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+            <Label Grid.Column="2"
+                   x:Name="lblNumeroScelta"
+                   Text="Pick #1"
+                   TextColor="Gold"
+                   FontSize="18"
+                   FontAttributes="Bold"/>
+        </Grid>
+
+        <!-- Area Centrale con Animazioni -->
+        <Grid Grid.Row="1" 
+              VerticalOptions="Center"
+              HorizontalOptions="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Testo annuncio -->
+            <Label x:Name="lblAnnuncio"
+                   Text="La scelta numero 1 va a..."
+                   TextColor="White"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,30"
+                   Opacity="0"/>
+
+            <!-- Countdown animato -->
+            <Label x:Name="lblCountdown"
+                   Grid.Row="1"
+                   Text="3"
+                   TextColor="#C8102E"
+                   FontSize="72"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Opacity="0"
+                   Scale="0.5"/>
+
+            <!-- Logo squadra -->
+            <Image x:Name="imgLogo"
+                   Grid.Row="2"
+                   WidthRequest="200"
+                   HeightRequest="200"
+                   Margin="0,30"
+                   Opacity="0"/>
+
+            <!-- Nome squadra finale -->
+            <Label x:Name="lblSquadra"
+                   Grid.Row="3"
+                   Text=""
+                   TextColor="White"
+                   FontSize="36"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Opacity="0"/>
+        </Grid>
+
+        <!-- Bottone prossima scelta -->
+        <Button Grid.Row="3"
+                x:Name="btnProssimaScelta"
+                Text="PROSSIMA SCELTA"
+                BackgroundColor="#C8102E"
+                TextColor="White"
+                FontSize="20"
+                FontAttributes="Bold"
+                CornerRadius="0"
+                HeightRequest="70"
+                Clicked="OnProssimaSceltaClicked"
+                IsVisible="False"/>
+
+        <!-- Bottone fine draft -->
+        <Label Grid.Row="3"
+               x:Name="lblFineDraft"
+               Text="🏆 DRAFT COMPLETATO 🏆"
+               TextColor="Gold"
+               FontSize="24"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="False"/>
+    </Grid>
+</ContentPage>
