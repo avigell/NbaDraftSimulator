@@ -1,8 +1,6 @@
 ﻿using NBADraftSimulator.Models;
 using NBADraftSimulator.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace NBADraftSimulator.Views
 {
@@ -20,12 +18,14 @@ namespace NBADraftSimulator.Views
             _draftService = draftService;
             _squadre = squadre;
 
+            // Inizializza draft
             _draftService.InizializzaDraft(_squadre);
 
-            // Inizializza UI
-            lblNumeroScelta.Text = $"PICK #{_squadre.Count}";
+            // Prepara UI
             btnProssimaScelta.IsVisible = true;
             lblFineDraft.IsVisible = false;
+            //int prossimoNumeroDaMostrare = totaleSquadre - _draftService.NumeroSceltaCorrente + 1;
+            //lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
         }
 
         private async void OnProssimaSceltaClicked(object sender, EventArgs e)
@@ -38,17 +38,9 @@ namespace NBADraftSimulator.Views
                 btnProssimaScelta.IsVisible = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
-
-                if (squadra == null)
-                {
-                    _staAnimando = false;
-                    btnProssimaScelta.IsVisible = true;
-                    return;
-                }
-
                 int totaleSquadre = _squadre.Count;
-                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1;
-                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente;
+                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1; // Indice da 0 a 7
+                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente; // Calcola 8, 7, 6...
 
                 await MostraSceltaConSuspence(squadra, numeroSceltaDaMostrare);
 
@@ -57,7 +49,6 @@ namespace NBADraftSimulator.Views
                 if (_draftService.HaProssimaScelta())
                 {
                     btnProssimaScelta.IsVisible = true;
-
                     int prossimaScelta = _draftService.NumeroSceltaCorrente;
                     int prossimoNumeroDaMostrare = totaleSquadre - prossimaScelta + 1;
                     lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
@@ -73,16 +64,13 @@ namespace NBADraftSimulator.Views
 
         private async Task MostraSceltaConSuspence(Squadra squadra, int numeroScelta)
         {
-            if (squadra == null) return;
-
             // Reset UI
             lblAnnuncio.Opacity = 0;
             lblAnnuncio.Scale = 1;
-            lblAnnuncio.Text = $"LA SCELTA NUMERO {numeroScelta} VA A...";
+            lblAnnuncio.Text = $"La scelta numero {numeroScelta} va a...";
             lblAnnuncio.TextColor = Colors.White;
 
             imgLogo.Opacity = 0;
-            imgLogo.Scale = 0.1;
             lblSquadra.Opacity = 0;
 
             // Mostra annuncio iniziale
@@ -95,6 +83,7 @@ namespace NBADraftSimulator.Views
                 lblCountdown.Opacity = 0;
                 lblCountdown.Scale = 0.5;
 
+                // Animazione ingrandimento
                 await Task.WhenAll(
                     lblCountdown.FadeTo(1, 400),
                     lblCountdown.ScaleTo(2.5, 400, Easing.SpringOut)
@@ -105,63 +94,56 @@ namespace NBADraftSimulator.Views
                     lblCountdown.ScaleTo(0.5, 300)
                 );
 
+                // Vibrazione per l'ultimo numero (gestione errori inclusa)
                 if (i == 1)
                 {
                     try
                     {
+                        // Verifica se la vibrazione è disponibile prima di usarla
                         if (Vibration.Default.IsSupported)
+                        {
                             Vibration.Default.Vibrate(TimeSpan.FromMilliseconds(100));
+                        }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        // Ignora silenziosamente - la vibrazione non è fondamentale
+                        System.Diagnostics.Debug.WriteLine($"Vibrazione non disponibile: {ex.Message}");
+                    }
                 }
             }
 
-            // Effetto finale con pallone
+            // Effetto finale
             lblCountdown.Text = "🏀";
             lblCountdown.TextColor = Colors.Orange;
             await lblCountdown.FadeTo(1, 200);
-            await lblCountdown.ScaleTo(4.0, 200);
             await lblCountdown.FadeTo(0, 200);
 
-            // Reset countdown
-            lblCountdown.Text = "3";
-            lblCountdown.FontSize = 72;
-            lblCountdown.TextColor = Color.FromArgb("#C8102E");
-
-            // Mostra logo squadra
-            try
-            {
-                imgLogo.Source = squadra.LogoPath;
-            }
-            catch
-            {
-                imgLogo.Source = "team_default.png";
-            }
-
-            // Animazione del logo
-            await Task.WhenAll(
-                imgLogo.FadeTo(1, 600),
-                imgLogo.ScaleTo(1.2, 600, Easing.SpringOut)
-            );
-            await imgLogo.ScaleTo(1.0, 200);
-
-            // Mostra nome squadra
+            // Mostra squadra
             lblSquadra.Text = squadra.Nome.ToUpper();
             lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
 
+            // Mostra logo
+            imgLogo.Source = squadra.LogoPath;
+
+            // Animazione finale
             await Task.WhenAll(
-                lblSquadra.FadeTo(1, 500),
-                lblSquadra.ScaleTo(1.3, 500, Easing.SpringOut)
+                imgLogo.FadeTo(1, 600),
+                lblSquadra.FadeTo(1, 600),
+                lblSquadra.ScaleTo(1.5, 600, Easing.SpringOut)
             );
+
             await lblSquadra.ScaleTo(1.0, 300);
 
-            // Aggiorna annuncio finale
+            // Aggiorna annuncio
             lblAnnuncio.Text = $"CON LA SCELTA #{numeroScelta}";
             lblAnnuncio.TextColor = Color.FromArgb(squadra.ColoreSecondario);
         }
 
+        // Gestione back button
         protected override bool OnBackButtonPressed()
         {
+            // Torna alla configurazione
             Navigation.PopAsync();
             return true;
         }
