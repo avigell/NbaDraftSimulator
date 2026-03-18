@@ -16,16 +16,14 @@ namespace NBADraftSimulator.Views
             NavigationPage.SetHasNavigationBar(this, false);
 
             _draftService = draftService;
-            _squadre = squadre;
+            _squadre = squadre;  // <-- PRIMA assegna _squadre
 
-            // Inizializza draft
             _draftService.InizializzaDraft(_squadre);
 
-            // Prepara UI
+            // POI puoi usare _squadre.Count
+            lblNumeroScelta.Text = $"PICK #{_squadre.Count}";
             btnProssimaScelta.IsVisible = true;
             lblFineDraft.IsVisible = false;
-            //int prossimoNumeroDaMostrare = totaleSquadre - _draftService.NumeroSceltaCorrente + 1;
-            //lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
         }
 
         private async void OnProssimaSceltaClicked(object sender, EventArgs e)
@@ -38,9 +36,9 @@ namespace NBADraftSimulator.Views
                 btnProssimaScelta.IsVisible = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
+                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1;
                 int totaleSquadre = _squadre.Count;
-                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1; // Indice da 0 a 7
-                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente; // Calcola 8, 7, 6...
+                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente; 
 
                 await MostraSceltaConSuspence(squadra, numeroSceltaDaMostrare);
 
@@ -49,8 +47,7 @@ namespace NBADraftSimulator.Views
                 if (_draftService.HaProssimaScelta())
                 {
                     btnProssimaScelta.IsVisible = true;
-                    int prossimaScelta = _draftService.NumeroSceltaCorrente;
-                    int prossimoNumeroDaMostrare = totaleSquadre - prossimaScelta + 1;
+                    int prossimoNumeroDaMostrare = totaleSquadre - (sceltaCorrente + 1);
                     lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
                 }
                 else
@@ -124,7 +121,21 @@ namespace NBADraftSimulator.Views
             lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
 
             // Mostra logo
-            imgLogo.Source = squadra.LogoPath;
+            try
+            {
+                if (!string.IsNullOrEmpty(squadra.LogoPath))
+                {
+                    imgLogo.Source = squadra.LogoPath;
+                }
+                else
+                {
+                    imgLogo.Source = "team_default.png";
+                }
+            }
+            catch
+            {
+                imgLogo.Source = "team_default.png";
+            }
 
             // Animazione finale
             await Task.WhenAll(

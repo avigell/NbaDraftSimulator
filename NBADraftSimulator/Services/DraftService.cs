@@ -49,29 +49,60 @@ namespace NBADraftSimulator.Services
             if (!_squadreDisponibili.Any())
                 return null;
 
-            // Calcola totale pesi
-            int totalePesi = _squadreDisponibili.Sum(s => s.Peso);
+            // --- NUOVA LOGICA PER ULTIMA SCELTA ---
+            // Se rimane UNA SOLA squadra (è l'ultima scelta)
+            if (_squadreDisponibili.Count == 1)
+            {
+                var unicaSquadra = _squadreDisponibili.First();
+                // Se l'unica squadra rimasta DEVE essere esclusa, qualcosa è andato storto.
+                // In un flusso corretto, non dovrebbe mai capitare che l'unica squadra rimasta abbia il flag true.
+                // Per sicurezza, la escludiamo dal controllo e la restituiamo comunque.
+                // Ma se vuoi essere più rigoroso, potresti lanciare un'eccezione o mostrare un errore.
+                if (unicaSquadra.EscludiDaUltimaScelta)
+                {
+                    // Logica di fallback: potrebbe succedere se tutte le squadre hanno il flag?
+                    // In questo caso, forziamo l'ammissione dell'ultima.
+                    System.Diagnostics.Debug.WriteLine("Attenzione: Ultima squadra ha il flag di esclusione, ma viene comunque estratta.");
+                }
+                _squadreDisponibili.Remove(unicaSquadra);
+                _ordineEstratto.Add(unicaSquadra);
+                return unicaSquadra;
+            }
+            // --------------------------------------
 
-            // Estrai numero casuale
-            int estratto = _random.Next(1, totalePesi + 1);
+            // --- CALCOLO DEL PESO INVERSO ---
+            // 1. Trova il peso massimo tra le squadre disponibili
+            int pesoMassimo = _squadreDisponibili.Max(s => s.Peso);
 
-            // Trova squadra corrispondente
+            // 2. Per ogni squadra, calcola un peso inverso: (pesoMassimo + 1) - pesoOriginale
+            //    In questo modo, chi ha peso più alto (es. 100) avrà peso inverso basso (es. 1)
+            //    e viceversa.
+            var squadreConPesoInverso = _squadreDisponibili
+                .Select(s => new { Squadra = s, PesoInverso = (pesoMassimo + 1) - s.Peso })
+                .ToList();
+
+            // 3. Calcola il totale dei pesi inversi
+            int totalePesiInversi = squadreConPesoInverso.Sum(item => item.PesoInverso);
+
+            // 4. Estrai un numero casuale basato sul totale dei pesi inversi
+            int estratto = _random.Next(1, totalePesiInversi + 1);
+
+            // 5. Trova la squadra corrispondente usando i pesi inversi
             int cumulativo = 0;
             Squadra squadraSelezionata = null;
-
-            foreach (var squadra in _squadreDisponibili)
+            foreach (var item in squadreConPesoInverso)
             {
-                cumulativo += squadra.Peso;
+                cumulativo += item.PesoInverso;
                 if (estratto <= cumulativo)
                 {
-                    squadraSelezionata = squadra;
+                    squadraSelezionata = item.Squadra;
                     break;
                 }
             }
+            // ---------------------------------
 
             if (squadraSelezionata != null)
             {
-                squadraSelezionata.EStataEstratta = true;
                 _squadreDisponibili.Remove(squadraSelezionata);
                 _ordineEstratto.Add(squadraSelezionata);
             }
@@ -80,6 +111,7 @@ namespace NBADraftSimulator.Services
         }
 
         public int NumeroSceltaCorrente => _sceltaCorrente++;
+        public int TotaleSquadre => _squadreOriginali?.Count ?? 0;
 
         public List<Squadra> GetOrdineCompleto()
         {

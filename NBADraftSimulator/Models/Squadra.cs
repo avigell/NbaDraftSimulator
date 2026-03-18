@@ -14,6 +14,7 @@ namespace NBADraftSimulator.Models
         public string ColoreSecondario { get; set; } = "#C8102E"; // Rosso NBA default
         public string LogoPath { get; set; } = "team_default.png";
         public bool EStataEstratta { get; set; } = false;
+        public bool EscludiDaUltimaScelta { get; set; } = false;
 
         // Per MVVM
         public override string ToString()

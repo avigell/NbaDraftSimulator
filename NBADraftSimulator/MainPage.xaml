@@ -61,68 +61,104 @@
         </Frame>
 
         <!-- Lista Squadre -->
+        <!-- Lista Squadre - Versione Ottimizzata -->
+        <!-- Lista Squadre - Versione con nome intero e bordi visibili -->
         <CollectionView Grid.Row="2" 
-                        ItemsSource="{Binding Squadre}"
-                        Margin="10">
+                ItemsSource="{Binding Squadre}"
+                Margin="10">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Margin="0,5" 
-                           Padding="10"
-                           CornerRadius="5"
-                           HasShadow="True">
+                    <Frame Margin="5,3"  
+                        Padding="10"
+                   CornerRadius="5"
+                   HasShadow="True"
+                   HeightRequest="70"
+                   BorderColor="#CCCCCC">
+                        <!-- Aggiunto bordo visibile -->
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="40"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Cerchio colore squadra -->
-                            <BoxView Color="{Binding ColorePrimario}"
-                                     WidthRequest="40" 
-                                     HeightRequest="40"
-                                     CornerRadius="20"/>
+                            <!-- Nome squadra - ORA TUTTO VISIBILE -->
+                            <Label Grid.Column="0" 
+                           Text="{Binding Nome}"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Start"
+                           WidthRequest="110" 
+                           MaxLines="2"
+                           LineBreakMode="WordWrap"/>
 
-                            <Label Grid.Column="1" 
-                                   Text="{Binding Nome}"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   VerticalOptions="Center"
-                                   Margin="10,0"/>
+                                <!-- Slider peso -->
+                                <Grid Grid.Column="1" 
+                          VerticalOptions="Center"
+                          HorizontalOptions="Fill"
+                          Margin="5,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                            <!-- Slider peso -->
-                            <Grid Grid.Column="2" 
-                                  VerticalOptions="Center"
-                                  WidthRequest="150">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                                    <Label Text="{Binding Peso, StringFormat='Peso: {0}'}"
+                                       FontSize="11"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,-10"/>
 
-                                <Label Text="{Binding Peso, StringFormat='Peso: {0}'}"
-                                       FontSize="12"
-                                       HorizontalOptions="Center"/>
+                                    <Slider Grid.Row="1"
+                                Minimum="1" 
+                                Maximum="100"
+                                Value="{Binding Peso}"
+                                MinimumTrackColor="#1D428A"
+                                MaximumTrackColor="#CCCCCC"
+                                ThumbColor="#C8102E"/>
+                                </Grid>
 
-                                <Slider Grid.Row="1"
-                                        Minimum="1" 
-                                        Maximum="100"
-                                        Value="{Binding Peso}"
-                                        MinimumTrackColor="#1D428A"
-                                        MaximumTrackColor="#CCCCCC"
-                                        ThumbColor="#C8102E"/>
-                            </Grid>
+                                <!-- Switch per esclusione ultima scelta -->
+                                <Grid Grid.Column="2" 
+                          VerticalOptions="Center"
+                          HorizontalOptions="Center"
+                                      RowSpacing="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                            <!-- Bottone rimuovi -->
-                            <Button Grid.Column="3"
-                                    Text="✖"
-                                    BackgroundColor="Transparent"
-                                    TextColor="#FF4444"
-                                    FontSize="18"
-                                    WidthRequest="40"
-                                    HeightRequest="40"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=RimuoviSquadraCommand}"
-                                    CommandParameter="{Binding .}"/>
+                                    <Label Text="No #1"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="#C8102E"
+                               HorizontalOptions="Center"
+                                           Margin="0,0,0,-10"/>
+
+                                    <Switch Grid.Row="1"
+                                IsToggled="{Binding EscludiDaUltimaScelta}"
+                                OnColor="#C8102E"
+                                ThumbColor="#FFD700"
+                                HorizontalOptions="Center"
+                                Scale="0.9"
+                                Margin="0,0,0,0"/>
+                                </Grid>
+
+                                <!-- Bottone rimuovi - CENTRATO -->
+                                <Button Grid.Column="3"
+                            Text="✖"
+                            BackgroundColor="Transparent"
+                            TextColor="#FF4444"
+                            FontSize="20"
+                            FontAttributes="Bold"
+                            WidthRequest="44"
+                            HeightRequest="44"
+                            Padding="0"
+                            Margin="0"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=RimuoviSquadraCommand}"
+                            CommandParameter="{Binding .}"/>
                         </Grid>
                     </Frame>
                 </DataTemplate>
