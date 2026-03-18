@@ -29,14 +29,14 @@ namespace NBADraftSimulator.ViewModels
 
         private void CaricaSquadreDefault()
         {
-            _squadre.Add(new Squadra { Nome = "Lakers", Peso = 100, ColorePrimario = "#552583", LogoPath = "lakers.png" });
-            _squadre.Add(new Squadra { Nome = "Celtics", Peso = 90, ColorePrimario = "#007A33", LogoPath = "celtics.png" });
-            _squadre.Add(new Squadra { Nome = "Bulls", Peso = 80, ColorePrimario = "#CE1141", LogoPath = "bulls.png" });
-            _squadre.Add(new Squadra { Nome = "Warriors", Peso = 70, ColorePrimario = "#1D428A", LogoPath = "warriors.png" });
-            _squadre.Add(new Squadra { Nome = "Heat", Peso = 60, ColorePrimario = "#98002E", LogoPath = "heat.png" });
-            _squadre.Add(new Squadra { Nome = "Spurs", Peso = 50, ColorePrimario = "#000000", LogoPath = "spurs.png" });
-            _squadre.Add(new Squadra { Nome = "Suns", Peso = 40, ColorePrimario = "#1D1160", LogoPath = "suns.png" });
-            _squadre.Add(new Squadra { Nome = "Bucks", Peso = 30, ColorePrimario = "#00471B", LogoPath = "bucks.png" });
+            _squadre.Add(new Squadra { Nome = "The Dogtors", Peso = 0, ColorePrimario = "#552583", LogoPath = "lakers.png" });
+            _squadre.Add(new Squadra { Nome = "Fankulez", Peso = 0, ColorePrimario = "#007A33", LogoPath = "celtics.png" });
+            _squadre.Add(new Squadra { Nome = "The Fluffers", Peso = 0, ColorePrimario = "#CE1141", LogoPath = "bulls.png" });
+            _squadre.Add(new Squadra { Nome = "CallMeMamba", Peso = 0, ColorePrimario = "#1D428A", LogoPath = "warriors.png" });
+            _squadre.Add(new Squadra { Nome = "Wu-Tang Clan", Peso = 0, ColorePrimario = "#98002E", LogoPath = "heat.png" });
+            _squadre.Add(new Squadra { Nome = "Average Joe's", Peso = 0, ColorePrimario = "#000000", LogoPath = "spurs.png" });
+            _squadre.Add(new Squadra { Nome = "Slam Dunkerz", Peso = 0, ColorePrimario = "#1D1160", LogoPath = "suns.png" });
+            _squadre.Add(new Squadra { Nome = "San Candido Sinners", Peso = 0, ColorePrimario = "#00471B", LogoPath = "bucks.png" });
         }
 
         public ObservableCollection<Squadra> Squadre

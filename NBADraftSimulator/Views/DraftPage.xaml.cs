@@ -24,8 +24,7 @@ namespace NBADraftSimulator.Views
             // Prepara UI
             btnProssimaScelta.IsVisible = true;
             lblFineDraft.IsVisible = false;
-            //int prossimoNumeroDaMostrare = totaleSquadre - _draftService.NumeroSceltaCorrente + 1;
-            //lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
+            lblNumeroScelta.Text = $"PICK #{_squadre.Count}";
         }
 
         private async void OnProssimaSceltaClicked(object sender, EventArgs e)
@@ -38,11 +37,9 @@ namespace NBADraftSimulator.Views
                 btnProssimaScelta.IsVisible = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
-
-                // CALCOLO CORRETTO per il numero di scelta
                 int totaleSquadre = _squadre.Count;
-                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1; // Questo va da 1 a 8
-                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente + 1; // Inverte: 1→8, 2→7, ecc.
+                int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1; // Indice da 0 a 7
+                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente; // Calcola 8, 7, 6...
 
                 await MostraSceltaConSuspence(squadra, numeroSceltaDaMostrare);
 
@@ -51,8 +48,6 @@ namespace NBADraftSimulator.Views
                 if (_draftService.HaProssimaScelta())
                 {
                     btnProssimaScelta.IsVisible = true;
-
-                    // Aggiorna il numero nell'header per la PROSSIMA scelta
                     int prossimaScelta = _draftService.NumeroSceltaCorrente;
                     int prossimoNumeroDaMostrare = totaleSquadre - prossimaScelta + 1;
                     lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
