@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NBADraftSimulator.Views.RiepilogoPage"
+             Title="Draft Completato"
+             BackgroundColor="#0A0A0A">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header NBA -->
+        <Grid BackgroundColor="#1D428A" Padding="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Source="nba_logo.png" 
+                   WidthRequest="40" HeightRequest="40"
+                   Aspect="AspectFit"/>
+
+            <Label Grid.Column="1" 
+                   Text="RIEPILOGO DRAFT"
+                   TextColor="White"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+            <Button Grid.Column="2"
+                    Text="Home"
+                    BackgroundColor="#C8102E"
+                    TextColor="White"
+                    FontSize="14"
+                    CornerRadius="5"
+                    HeightRequest="40"
+                    WidthRequest="80"
+                    Clicked="OnHomeClicked"/>
+        </Grid>
+
+        <!-- Contenuto principale -->
+        <ScrollView Grid.Row="1" Margin="10">
+            <VerticalStackLayout Spacing="15">
+                <!-- Squadra Vincente (Pick #1) -->
+                <Frame BackgroundColor="#1D428A" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="🏆 PRIMA SCELTA ASSOLUTA 🏆"
+                           TextColor="Gold"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                                <Label x:Name="lblVincitore"
+                           Text=""
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/> 
+                    </VerticalStackLayout>
+                </Frame>
+
+
+                <!-- Sezione Ordine Draft -->
+                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="🏀 ORDINE FINALE 🏀"
+                               TextColor="Gold"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+
+                        <CollectionView x:Name="cvOrdine"
+                                        ItemsSource="{Binding .}"
+                                        HeightRequest="380">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- CORREZIONE: CornerRadius spostato sul Frame, non sul Grid -->
+                                    <Frame Padding="0" 
+                                           BackgroundColor="#2a2a2a" 
+                                           Margin="0,3"
+                                           CornerRadius="5"
+                                           HasShadow="False">
+                                        <Grid Padding="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Text="{Binding NumeroScelta, StringFormat='#{0}'}"
+                                                   TextColor="Gold"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   WidthRequest="40"/>
+
+                                            <Label Grid.Column="1" 
+                                                   Text="{Binding Nome}"
+                                                   TextColor="White"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"/>
+
+                                            <!--<Label Grid.Column="2"
+                                                   Text="{Binding PesoOriginale, StringFormat='Peso: {0}'}"
+                                                   TextColor="#CCCCCC"
+                                                   FontSize="14"/>-->
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Sezione Probabilità Iniziali -->
+                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10" IsVisible="False">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="📊 PROBABILITÀ INIZIALI 📊"
+                               TextColor="Gold"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+
+                        <CollectionView x:Name="cvProbabilita"
+                                        ItemsSource="{Binding .}"
+                                        HeightRequest="250">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- CORREZIONE: CornerRadius spostato sul Frame -->
+                                    <Frame Padding="0"
+                                           BackgroundColor="#2a2a2a" 
+                                           Margin="0,2"
+                                           CornerRadius="5"
+                                           HasShadow="False">
+                                        <Grid Padding="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Text="{Binding Nome}"
+                                                   TextColor="White"
+                                                   FontSize="14"/>
+
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Probabilita, StringFormat='{0:F1}%'}"
+                                                   TextColor="{Binding Colore}"
+                                                   FontSize="14"
+                                                   FontAttributes="Bold"/>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- Legenda -->
+                        <Label Text="Più alto il peso, più probabile l'ultima scelta"
+                               TextColor="#CCCCCC"
+                               FontSize="12"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottone Nuovo Draft -->
+        <Button Grid.Row="3"
+                Text="🔄 NUOVO DRAFT"
+                BackgroundColor="#C8102E"
+                TextColor="White"
+                FontSize="18"
+                FontAttributes="Bold"
+                CornerRadius="0"
+                HeightRequest="70"
+                Clicked="OnNuovoDraftClicked"/>
+    </Grid>
+</ContentPage>

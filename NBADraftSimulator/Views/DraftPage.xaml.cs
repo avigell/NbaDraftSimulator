@@ -52,9 +52,12 @@ namespace NBADraftSimulator.Views
                 }
                 else
                 {
-                    // Draft completato!
-                    lblFineDraft.IsVisible = true;
-                    lblNumeroScelta.Text = "DRAFT COMPLETATO!";
+                    // Draft completato - VAI AL RIEPILOGO
+                    var ordineCompleto = _draftService.GetOrdineCompleto();
+                    var squadreOriginali = _squadre; // Le squadre con i pesi originali
+
+                    // Naviga alla pagina di riepilogo
+                    Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
                 }
             }
         }

@@ -94,31 +94,30 @@
                            MaxLines="2"
                            LineBreakMode="WordWrap"/>
 
-                                <!-- Slider peso -->
-                                <Grid Grid.Column="1" 
-                          VerticalOptions="Center"
-                          HorizontalOptions="Fill"
-                          Margin="5,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                            <!-- Slider peso -->
+                            <Grid Grid.Column="1" 
+      VerticalOptions="Center"
+      WidthRequest="150">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                                    <Label Text="{Binding Peso, StringFormat='Peso: {0}'}"
-                                       FontSize="11"
-                                       HorizontalOptions="Center"
-                                       Margin="0,0,0,-10"/>
+                                <!-- MODIFICATO: Ora si aggiorna in tempo reale -->
+                                <Label Text="{Binding Peso, StringFormat='Peso: {0}'}"
+           FontSize="12"
+           HorizontalOptions="Center"/>
 
-                                    <Slider Grid.Row="1"
-                                Minimum="1" 
-                                Maximum="100"
-                                Value="{Binding Peso}"
-                                MinimumTrackColor="#1D428A"
-                                MaximumTrackColor="#CCCCCC"
-                                ThumbColor="#C8102E"/>
-                                </Grid>
+                                <Slider Grid.Row="1"
+            Minimum="1" 
+            Maximum="100"
+            Value="{Binding Peso}"
+            MinimumTrackColor="#1D428A"
+            MaximumTrackColor="#CCCCCC"
+            ThumbColor="#C8102E"/>
+                            </Grid>
 
-                                <!-- Switch per esclusione ultima scelta -->
+                            <!-- Switch per esclusione ultima scelta -->
                                 <Grid Grid.Column="2" 
                           VerticalOptions="Center"
                           HorizontalOptions="Center"
