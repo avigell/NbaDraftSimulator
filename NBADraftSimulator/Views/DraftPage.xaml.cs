@@ -1,4 +1,6 @@
-﻿using NBADraftSimulator.Models;
+﻿using Microsoft.Maui.Media;
+using Plugin.Maui.Audio;
+using NBADraftSimulator.Models;
 using NBADraftSimulator.Services;
 using System.Collections.ObjectModel;
 
@@ -9,6 +11,12 @@ namespace NBADraftSimulator.Views
         private DraftService _draftService;
         private List<Squadra> _squadre;
         private bool _staAnimando = false;
+
+        // NUOVO: Gestione audio
+        private IAudioPlayer _drumrollPlayer;
+        private IAudioPlayer _applausePlayer;
+        private IAudioPlayer _buzzerPlayer;
+        private IAudioManager _audioManager;
 
         public DraftPage(DraftService draftService, List<Squadra> squadre)
         {
@@ -24,6 +32,31 @@ namespace NBADraftSimulator.Views
             lblNumeroScelta.Text = $"PICK #{_squadre.Count}";
             btnProssimaScelta.IsVisible = true;
             lblFineDraft.IsVisible = false;
+
+            // NUOVO: Inizializza audio
+            InizializzaAudio();
+        }
+
+        // NUOVO: Metodo per caricare i suoni
+        private async void InizializzaAudio()
+        {
+            try
+            {
+                _audioManager = AudioManager.Current;
+
+                var drumrollStream = await FileSystem.OpenAppPackageFileAsync("drum-roll.wav");
+                _drumrollPlayer = _audioManager.CreatePlayer(drumrollStream);
+
+                var applauseStream = await FileSystem.OpenAppPackageFileAsync("applause.wav");
+                _applausePlayer = _audioManager.CreatePlayer(applauseStream);
+
+                var buzzerStream = await FileSystem.OpenAppPackageFileAsync("buzzer.mp3");
+                _buzzerPlayer = _audioManager.CreatePlayer(buzzerStream);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Errore caricamento audio: {ex.Message}");
+            }
         }
 
         private async void OnProssimaSceltaClicked(object sender, EventArgs e)
@@ -64,26 +97,37 @@ namespace NBADraftSimulator.Views
 
         private async Task MostraSceltaConSuspence(Squadra squadra, int numeroScelta)
         {
-            // Reset UI
+            if (squadra == null) return;
+
+            // === 1. RESET UI ===
             lblAnnuncio.Opacity = 0;
             lblAnnuncio.Scale = 1;
-            lblAnnuncio.Text = $"La scelta numero {numeroScelta} va a...";
+            lblAnnuncio.Text = $"LA SCELTA NUMERO {numeroScelta} VA A...";
             lblAnnuncio.TextColor = Colors.White;
 
             imgLogo.Opacity = 0;
+            imgLogo.Scale = 0.1;
             lblSquadra.Opacity = 0;
 
-            // Mostra annuncio iniziale
-            await lblAnnuncio.FadeTo(1, 500);
+            // Assicurati che il logo temporaneo sia nascosto
+            imgSquadraLogo.IsVisible = false;
 
-            // Countdown con effetti
-            for (int i = 3; i > 0; i--)
+            // === 2. ANNUNCIO INIZIALE ===
+            _applausePlayer?.Stop();
+            await lblAnnuncio.FadeTo(1, 500);
+            await Parla($"La scelta numero {numeroScelta} va, a");
+            _drumrollPlayer?.Play();
+            
+
+            // === 3. FASE DI SUSPENSE (RULLO DI TAMBURI + COUNTDOWN) ===
+            
+
+            for (int i = 5; i > 0; i--)
             {
                 lblCountdown.Text = i.ToString();
                 lblCountdown.Opacity = 0;
                 lblCountdown.Scale = 0.5;
 
-                // Animazione ingrandimento
                 await Task.WhenAll(
                     lblCountdown.FadeTo(1, 400),
                     lblCountdown.ScaleTo(2.5, 400, Easing.SpringOut)
@@ -93,65 +137,107 @@ namespace NBADraftSimulator.Views
                     lblCountdown.FadeTo(0, 300),
                     lblCountdown.ScaleTo(0.5, 300)
                 );
-
-                // Vibrazione per l'ultimo numero (gestione errori inclusa)
-                if (i == 1)
-                {
-                    try
-                    {
-                        // Verifica se la vibrazione è disponibile prima di usarla
-                        if (Vibration.Default.IsSupported)
-                        {
-                            Vibration.Default.Vibrate(TimeSpan.FromMilliseconds(100));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // Ignora silenziosamente - la vibrazione non è fondamentale
-                        System.Diagnostics.Debug.WriteLine($"Vibrazione non disponibile: {ex.Message}");
-                    }
-                }
             }
 
-            // Effetto finale
-            lblCountdown.Text = "🏀";
-            lblCountdown.TextColor = Colors.Orange;
-            await lblCountdown.FadeTo(1, 200);
-            await lblCountdown.FadeTo(0, 200);
+            _drumrollPlayer?.Stop();
 
-            // Mostra squadra
-            lblSquadra.Text = squadra.Nome.ToUpper();
-            lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
+            // === 4. MOMENTO CLIMATICO (BUZZER + LOGO SQUADRA GIGANTE) ===
+            _buzzerPlayer?.Play();
 
-            // Mostra logo
+            // Mostra il logo della squadra IN GRANDE al posto del pallone
             try
             {
-                if (!string.IsNullOrEmpty(squadra.LogoPath))
-                {
-                    imgLogo.Source = squadra.LogoPath;
-                }
-                else
-                {
-                    imgLogo.Source = "team_default.png";
-                }
+                imgSquadraLogo.Source = squadra.LogoPath;  // Usa il logo della squadra corrente
+            }
+            catch
+            {
+                imgSquadraLogo.Source = "team_default.png";
+            }
+
+            imgSquadraLogo.Opacity = 0;
+            imgSquadraLogo.Scale = 0.1;
+            imgSquadraLogo.IsVisible = true;
+
+            // Animazione: il logo appare gigante e poi svanisce
+            //await Task.WhenAll(
+            //    imgSquadraLogo.FadeTo(1, 200),
+            //    imgSquadraLogo.ScaleTo(4.0, 200, Easing.SpringOut)
+            //);
+
+            await Task.WhenAll(
+                imgSquadraLogo.FadeTo(0, 300),
+                imgSquadraLogo.ScaleTo(0.1, 300)
+            );
+
+            imgSquadraLogo.IsVisible = false;
+
+            // === 5. RESET COUNTDOWN ===
+            lblCountdown.Text = "5";
+            lblCountdown.FontSize = 72;
+            lblCountdown.TextColor = Color.FromArgb("#C8102E");
+
+            // === 6. RIVELAZIONE SQUADRA ===
+            
+            // Mostra il logo normale
+            try
+            {
+                imgLogo.Source = squadra.LogoPath;
             }
             catch
             {
                 imgLogo.Source = "team_default.png";
             }
 
-            // Animazione finale
+            // Animazione logo normale
             await Task.WhenAll(
                 imgLogo.FadeTo(1, 600),
-                lblSquadra.FadeTo(1, 600),
-                lblSquadra.ScaleTo(1.5, 600, Easing.SpringOut)
+                imgLogo.ScaleTo(1.2, 600, Easing.SpringOut)
             );
+            await imgLogo.ScaleTo(1.0, 200);
+            await Parla(squadra.Nome);
+            // Animazione nome squadra
+            lblSquadra.Text = squadra.Nome.ToUpper();
+            lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
 
+            await Task.WhenAll(
+                lblSquadra.FadeTo(1, 500),
+                lblSquadra.ScaleTo(1.3, 500, Easing.SpringOut)
+            );
             await lblSquadra.ScaleTo(1.0, 300);
 
-            // Aggiorna annuncio
+            // === 7. FINALE ===
             lblAnnuncio.Text = $"CON LA SCELTA #{numeroScelta}";
             lblAnnuncio.TextColor = Color.FromArgb(squadra.ColoreSecondario);
+
+            _applausePlayer?.Play();
+        }
+
+        private async Task Parla(string testo)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(testo))
+                {
+                    // Ottieni la lista delle lingue disponibili
+                    var locales = await TextToSpeech.Default.GetLocalesAsync();
+
+                    // Cerca l'italiano
+                    var italiano = locales.FirstOrDefault(l => l.Language == "it");
+
+                    var settings = new SpeechOptions
+                    {
+                        Volume = 1.0f,      // Massimo volume
+                        Pitch = 1.0f,        // Tono normale
+                        Locale = italiano    // Usa la lingua italiana se disponibile
+                    };
+
+                    await TextToSpeech.Default.SpeakAsync(testo, settings);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Errore sintesi vocale: {ex.Message}");
+            }
         }
 
         // Gestione back button

@@ -29,14 +29,14 @@ namespace NBADraftSimulator.ViewModels
 
         private void CaricaSquadreDefault()
         {
-            _squadre.Add(new Squadra { Nome = "The Dogtors", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "lakers.png" });
-            _squadre.Add(new Squadra { Nome = "Fankulez", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "celtics.png" });
-            _squadre.Add(new Squadra { Nome = "The Fluffers", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "bulls.png" });
-            _squadre.Add(new Squadra { Nome = "CallMeMamba", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "warriors.png" });
-            _squadre.Add(new Squadra { Nome = "Wu-Tang Clan", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "heat.png" });
-            _squadre.Add(new Squadra { Nome = "Average Joe's", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "spurs.png" });
-            _squadre.Add(new Squadra { Nome = "Slam Dunkerz", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "suns.png" });
-            _squadre.Add(new Squadra { Nome = "San Candido Sinners", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "bucks.png" });
+            _squadre.Add(new Squadra { Nome = "The Dogtors", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo02.png" });
+            _squadre.Add(new Squadra { Nome = "Fankulez", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo06.png" });
+            _squadre.Add(new Squadra { Nome = "The Fluffers", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo03.png" });
+            _squadre.Add(new Squadra { Nome = "CallMeMamba", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo01.png" });
+            _squadre.Add(new Squadra { Nome = "Wu-Tang Clan", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo01.png" });
+            _squadre.Add(new Squadra { Nome = "Average Joe's", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo05.png" });
+            _squadre.Add(new Squadra { Nome = "Slam Dunkerz", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo04.png" });
+            _squadre.Add(new Squadra { Nome = "San Candido Sinners", Peso = 1, ColorePrimario = "#FFFFFF", LogoPath = "logo01.png" });
         }
 
         public ObservableCollection<Squadra> Squadre

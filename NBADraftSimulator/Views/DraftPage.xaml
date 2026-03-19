@@ -72,7 +72,17 @@
                    Opacity="0"
                    Scale="0.5"/>
 
-            <!-- Logo squadra -->
+            <!-- NUOVO: Logo temporaneo per effetto gigante (sostituisce il pallone) -->
+            <Image x:Name="imgSquadraLogo"
+                   Grid.Row="1"
+                   WidthRequest="200"
+                   HeightRequest="200"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   IsVisible="False"
+                   Opacity="0"/>
+
+            <!-- Logo squadra finale -->
             <Image x:Name="imgLogo"
                    Grid.Row="2"
                    WidthRequest="200"
@@ -104,7 +114,7 @@
                 Clicked="OnProssimaSceltaClicked"
                 IsVisible="False"/>
 
-        <!-- Bottone fine draft -->
+        <!-- Label fine draft -->
         <Label Grid.Row="3"
                x:Name="lblFineDraft"
                Text="🏆 DRAFT COMPLETATO 🏆"
