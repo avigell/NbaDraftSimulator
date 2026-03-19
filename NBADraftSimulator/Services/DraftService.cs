@@ -31,6 +31,7 @@ namespace NBADraftSimulator.Services
                 ColorePrimario = s.ColorePrimario,
                 ColoreSecondario = s.ColoreSecondario,
                 LogoPath = s.LogoPath,
+                EscludiDaUltimaScelta = s.EscludiDaUltimaScelta,
                 EStataEstratta = false
             }).ToList();
 
@@ -41,7 +42,12 @@ namespace NBADraftSimulator.Services
 
         public bool HaProssimaScelta()
         {
-            return _squadreDisponibili.Any();
+            // Se non ci sono squadre disponibili, fine draft
+            if (_squadreDisponibili == null || !_squadreDisponibili.Any())
+                return false;
+
+            // In tutti gli altri casi, c'è ancora una scelta da fare
+            return true;
         }
 
         public Squadra EstraiProssimaScelta()
@@ -49,45 +55,70 @@ namespace NBADraftSimulator.Services
             if (!_squadreDisponibili.Any())
                 return null;
 
-            // --- NUOVA LOGICA PER ULTIMA SCELTA ---
-            // Se rimane UNA SOLA squadra (è l'ultima scelta)
+            // --- GESTIONE ULTIMA SCELTA (quando rimane 1 squadra) ---
             if (_squadreDisponibili.Count == 1)
             {
-                var unicaSquadra = _squadreDisponibili.First();
-                // Se l'unica squadra rimasta DEVE essere esclusa, qualcosa è andato storto.
-                // In un flusso corretto, non dovrebbe mai capitare che l'unica squadra rimasta abbia il flag true.
-                // Per sicurezza, la escludiamo dal controllo e la restituiamo comunque.
-                // Ma se vuoi essere più rigoroso, potresti lanciare un'eccezione o mostrare un errore.
-                if (unicaSquadra.EscludiDaUltimaScelta)
-                {
-                    // Logica di fallback: potrebbe succedere se tutte le squadre hanno il flag?
-                    // In questo caso, forziamo l'ammissione dell'ultima.
-                    System.Diagnostics.Debug.WriteLine("Attenzione: Ultima squadra ha il flag di esclusione, ma viene comunque estratta.");
-                }
-                _squadreDisponibili.Remove(unicaSquadra);
-                _ordineEstratto.Add(unicaSquadra);
-                return unicaSquadra;
+                var ultimaSquadra = _squadreDisponibili.First();
+                _squadreDisponibili.Remove(ultimaSquadra);
+                _ordineEstratto.Add(ultimaSquadra);
+                return ultimaSquadra;
             }
-            // --------------------------------------
 
-            // --- CALCOLO DEL PESO INVERSO ---
-            // 1. Trova il peso massimo tra le squadre disponibili
-            int pesoMassimo = _squadreDisponibili.Max(s => s.Peso);
+            // --- SEPARA I DUE CONTENITORI ---
+            var squadreNonEscluse = _squadreDisponibili.Where(s => !s.EscludiDaUltimaScelta).ToList();
+            var squadreEscluse = _squadreDisponibili.Where(s => s.EscludiDaUltimaScelta).ToList();
 
-            // 2. Per ogni squadra, calcola un peso inverso: (pesoMassimo + 1) - pesoOriginale
-            //    In questo modo, chi ha peso più alto (es. 100) avrà peso inverso basso (es. 1)
-            //    e viceversa.
-            var squadreConPesoInverso = _squadreDisponibili
+            int conteggioNonEscluse = squadreNonEscluse.Count;
+            int conteggioEscluse = squadreEscluse.Count;
+
+            // --- DECIDE DA DOVE PESCARE ---
+            List<Squadra> poolEstrazione;
+
+            if (conteggioNonEscluse >= 2)
+            {
+                // CASO 1: Almeno 2 non escluse -> pesca da TUTTE (tanto ne rimarrà una)
+                poolEstrazione = _squadreDisponibili.ToList();
+                System.Diagnostics.Debug.WriteLine($"Estrazione da TUTTE ({_squadreDisponibili.Count} squadre) - Non escluse: {conteggioNonEscluse}");
+            }
+            else if (conteggioNonEscluse == 1 && conteggioEscluse > 0)
+            {
+                // CASO 2: UNA sola non esclusa e CI SONO escluse -> pesca SOLO dalle escluse
+                // La non esclusa è PROTETTA e non può essere estratta ora
+                poolEstrazione = squadreEscluse;
+
+                var squadraProtetta = squadreNonEscluse.First();
+                System.Diagnostics.Debug.WriteLine($"PROTEZIONE: {squadraProtetta.Nome} non può essere estratta ora");
+                System.Diagnostics.Debug.WriteLine($"Estrazione solo da ESCLUSE ({squadreEscluse.Count} squadre)");
+            }
+            else if (conteggioNonEscluse == 1 && conteggioEscluse == 0)
+            {
+                // CASO 3: UNA sola non esclusa e NESSUNA esclusa (impossibile se totale >1, ma per sicurezza)
+                poolEstrazione = _squadreDisponibili.ToList();
+                System.Diagnostics.Debug.WriteLine($"Solo non escluse, estrazione da TUTTE");
+            }
+            else // conteggioNonEscluse == 0
+            {
+                // CASO 4: Tutte sono escluse -> pesca da TUTTE
+                poolEstrazione = _squadreDisponibili.ToList();
+                System.Diagnostics.Debug.WriteLine($"Tutte escluse, estrazione da TUTTE");
+            }
+
+            // --- ESTRAZIONE PESATA DAL POOL SELEZIONATO ---
+            if (!poolEstrazione.Any())
+            {
+                // Fallback
+                poolEstrazione = _squadreDisponibili.ToList();
+            }
+
+            int pesoMassimo = poolEstrazione.Max(s => s.Peso);
+
+            var squadreConPesoInverso = poolEstrazione
                 .Select(s => new { Squadra = s, PesoInverso = (pesoMassimo + 1) - s.Peso })
                 .ToList();
 
-            // 3. Calcola il totale dei pesi inversi
             int totalePesiInversi = squadreConPesoInverso.Sum(item => item.PesoInverso);
-
-            // 4. Estrai un numero casuale basato sul totale dei pesi inversi
             int estratto = _random.Next(1, totalePesiInversi + 1);
 
-            // 5. Trova la squadra corrispondente usando i pesi inversi
             int cumulativo = 0;
             Squadra squadraSelezionata = null;
             foreach (var item in squadreConPesoInverso)
@@ -99,12 +130,16 @@ namespace NBADraftSimulator.Services
                     break;
                 }
             }
-            // ---------------------------------
 
             if (squadraSelezionata != null)
             {
                 _squadreDisponibili.Remove(squadraSelezionata);
                 _ordineEstratto.Add(squadraSelezionata);
+
+                if (squadreNonEscluse.Contains(squadraSelezionata))
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠️ ATTENZIONE: Estratta una non esclusa: {squadraSelezionata.Nome}");
+                }
             }
 
             return squadraSelezionata;
@@ -129,6 +164,7 @@ namespace NBADraftSimulator.Services
                     ColorePrimario = s.ColorePrimario,
                     ColoreSecondario = s.ColoreSecondario,
                     LogoPath = s.LogoPath,
+                    EscludiDaUltimaScelta = s.EscludiDaUltimaScelta,
                     EStataEstratta = false
                 }).ToList();
 
