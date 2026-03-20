@@ -4,105 +4,29 @@
              x:Class="NBADraftSimulator.App">
     <Application.Resources>
         <ResourceDictionary>
-
-            <!-- ========== COLORI NBA (costanti) ========== -->
             <Color x:Key="NBABlue">#1D428A</Color>
             <Color x:Key="NBARed">#C8102E</Color>
+            <Color x:Key="NBAWhite">#FFFFFF</Color>
             <Color x:Key="NBAGold">#FFD700</Color>
-
-            <!-- ========== COLORI BASE (fissi) ========== -->
-            <Color x:Key="LightBackground">#FFFFFF</Color>
-            <Color x:Key="DarkBackground">#0A0A0A</Color>
-            <Color x:Key="LightSecondaryBackground">#F5F5F5</Color>
-            <Color x:Key="DarkSecondaryBackground">#1a1a1a</Color>
-            <Color x:Key="LightText">#000000</Color>
-            <Color x:Key="DarkText">#FFFFFF</Color>
-            <Color x:Key="LightSecondaryText">#666666</Color>
-            <Color x:Key="DarkSecondaryText">#CCCCCC</Color>
-            <Color x:Key="LightBorder">#E0E0E0</Color>
-            <Color x:Key="DarkBorder">#333333</Color>
-
-            <!-- ========== RISORSE DINAMICHE (AppThemeBinding) ========== -->
-            <AppThemeBinding x:Key="BackgroundColor"
-                             Light="{StaticResource LightBackground}"
-                             Dark="{StaticResource DarkBackground}"/>
-
-            <AppThemeBinding x:Key="SecondaryBackgroundColor"
-                             Light="{StaticResource LightSecondaryBackground}"
-                             Dark="{StaticResource DarkSecondaryBackground}"/>
-
-            <AppThemeBinding x:Key="TextColor"
-                             Light="{StaticResource LightText}"
-                             Dark="{StaticResource DarkText}"/>
-
-            <AppThemeBinding x:Key="SecondaryTextColor"
-                             Light="{StaticResource LightSecondaryText}"
-                             Dark="{StaticResource DarkSecondaryText}"/>
-
-            <AppThemeBinding x:Key="BorderColorDynamic"
-                             Light="{StaticResource LightBorder}"
-                             Dark="{StaticResource DarkBorder}"/>
-
-            <!-- ========== STILI GLOBALI ========== -->
-
-            <Style TargetType="ContentPage">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
-            </Style>
-
-            <Style TargetType="Label">
-                <Setter Property="TextColor" Value="{StaticResource TextColor}" />
-            </Style>
-
-            <Style TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="{StaticResource SecondaryBackgroundColor}" />
-                <Setter Property="BorderColor" Value="{StaticResource BorderColorDynamic}" />
-                <Setter Property="CornerRadius" Value="5"/>
-                <Setter Property="HasShadow" Value="True"/>
-                <Setter Property="Padding" Value="10"/>
-            </Style>
 
             <Style TargetType="Button">
                 <Setter Property="FontSize" Value="16"/>
                 <Setter Property="CornerRadius" Value="5"/>
                 <Setter Property="HeightRequest" Value="50"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource NBARed}"/>
-                <Setter Property="TextColor" Value="White"/>
-                <Setter Property="FontAttributes" Value="Bold"/>
             </Style>
 
-            <Style TargetType="Slider">
-                <Setter Property="MinimumTrackColor" Value="{StaticResource NBABlue}"/>
-                <Setter Property="MaximumTrackColor" Value="{StaticResource SecondaryTextColor}"/>
-                <Setter Property="ThumbColor" Value="{StaticResource NBARed}"/>
+            <Style TargetType="Frame">
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="Padding" Value="10"/>
             </Style>
 
-            <!-- Stile per NeonLabel (effetto glow) -->
-            <Style x:Key="NeonLabel" TargetType="Label">
-                <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
-                <Setter Property="FontAttributes" Value="Bold"/>
-                <Setter Property="Shadow">
-                    <Shadow Brush="{StaticResource NBAGold}" 
-                            Offset="0,0" 
-                            Radius="20"
-                            Opacity="0.8"/>
-                </Setter>
-            </Style>
-
-            <!-- Stile per titoli sezioni -->
-            <Style x:Key="SectionTitle" TargetType="Label">
-                <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="FontAttributes" Value="Bold"/>
+            <Style x:Key="NBATitle" TargetType="Label">
+                <Setter Property="FontFamily" Value="Basketball"/>
+                <Setter Property="FontSize" Value="28"/>
+                <Setter Property="TextColor" Value="{StaticResource NBABlue}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
             </Style>
-
-            <!-- Stile per statistiche -->
-            <Style x:Key="StatsLabel" TargetType="Label">
-                <Setter Property="TextColor" Value="{StaticResource SecondaryTextColor}"/>
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="HorizontalOptions" Value="Center"/>
-            </Style>
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>

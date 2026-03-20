@@ -194,22 +194,45 @@ namespace NBADraftSimulator.Views
                 imgLogo.ScaleTo(1.2, 600, Easing.SpringOut)
             );
             await imgLogo.ScaleTo(1.0, 200);
-            await Parla(squadra.Nome);
+            
             // Animazione nome squadra
             lblSquadra.Text = squadra.Nome.ToUpper();
             lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
-
+            
             await Task.WhenAll(
                 lblSquadra.FadeTo(1, 500),
                 lblSquadra.ScaleTo(1.3, 500, Easing.SpringOut)
             );
+            
             await lblSquadra.ScaleTo(1.0, 300);
-
+            await Parla(squadra.Nome);
             // === 7. FINALE ===
             lblAnnuncio.Text = $"CON LA SCELTA #{numeroScelta}";
             lblAnnuncio.TextColor = Color.FromArgb(squadra.ColoreSecondario);
 
             _applausePlayer?.Play();
+            _ = FadeOutAudioAsync(_applausePlayer, 3000);
+        }
+
+        private async Task FadeOutAudioAsync(IAudioPlayer player, int durataMs)
+        {
+            if (player == null || !player.IsPlaying) return;
+
+            int step = 50;
+            int steps = durataMs / step;
+            double volumeIniziale = player.Volume; // <-- CAMBIATO DA float A double
+
+            for (int i = 0; i <= steps; i++)
+            {
+                double t = (double)i / steps; // <-- CAST A double
+                                              // Easing quadratico: inizia lento, poi accelera la discesa
+                double easing = t * t;
+                player.Volume = volumeIniziale * (1 - easing);
+                await Task.Delay(step);
+            }
+
+            player.Stop();
+            player.Volume = volumeIniziale;
         }
 
         private async Task Parla(string testo)
