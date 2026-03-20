@@ -23,20 +23,14 @@
             <Image Source="nba_logo.png" 
                    WidthRequest="30" HeightRequest="30"/>
 
-            <Label Grid.Column="1" 
+            <Label x:Name="lblTitoloDraft"
+                   Grid.Column="1" 
                    Text="DRAFT 2024"
                    TextColor="White"
                    FontSize="20"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"/>
-
-            <Label Grid.Column="2"
-                   x:Name="lblNumeroScelta"
-                   Text="Pick #1"
-                   TextColor="Gold"
-                   FontSize="18"
-                   FontAttributes="Bold"/>
         </Grid>
 
         <!-- AREA CENTRALE -->
@@ -99,7 +93,7 @@
                    Opacity="0"/>
         </Grid>
 
-        <!-- Bottone -->
+        <!-- Bottone - sempre presente, visibilità gestita con Opacity -->
         <Button Grid.Row="3"
                 x:Name="btnProssimaScelta"
                 Text="PROSSIMA SCELTA"
@@ -110,9 +104,9 @@
                 CornerRadius="0"
                 HeightRequest="70"
                 Clicked="OnProssimaSceltaClicked"
-                IsVisible="False"/>
+                Opacity="1"/>
 
-        <!-- Fine draft -->
+        <!-- Fine draft - sempre presente, visibilità gestita con Opacity -->
         <Label Grid.Row="3"
                x:Name="lblFineDraft"
                Text="🏆 DRAFT COMPLETATO 🏆"
@@ -121,6 +115,6 @@
                FontAttributes="Bold"
                HorizontalOptions="Center"
                VerticalOptions="Center"
-               IsVisible="False"/>
+               Opacity="0"/>
     </Grid>
 </ContentPage>

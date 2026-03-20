@@ -12,7 +12,7 @@ namespace NBADraftSimulator.Views
         private List<Squadra> _squadre;
         private bool _staAnimando = false;
 
-        // NUOVO: Gestione audio
+        // Audio
         private IAudioPlayer _drumrollPlayer;
         private IAudioPlayer _applausePlayer;
         private IAudioPlayer _buzzerPlayer;
@@ -23,21 +23,27 @@ namespace NBADraftSimulator.Views
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
+            // Imposta l'anno corrente nel titolo
+            var labelTitolo = this.FindByName<Label>("lblTitoloDraft");
+            if (labelTitolo != null)
+            {
+                labelTitolo.Text = $"DRAFT {DateTime.Now.Year}";
+            }
+
             _draftService = draftService;
-            _squadre = squadre;  // <-- PRIMA assegna _squadre
+            _squadre = squadre;
 
             _draftService.InizializzaDraft(_squadre);
 
-            // POI puoi usare _squadre.Count
-            lblNumeroScelta.Text = $"PICK #{_squadre.Count}";
-            btnProssimaScelta.IsVisible = true;
-            lblFineDraft.IsVisible = false;
+            // Inizializza UI - il bottone è sempre visibile (opacity 1)
+            btnProssimaScelta.Opacity = 1;
+            btnProssimaScelta.IsEnabled = true;
+            lblFineDraft.Opacity = 0;
 
-            // NUOVO: Inizializza audio
+            // Inizializza audio
             InizializzaAudio();
         }
 
-        // NUOVO: Metodo per caricare i suoni
         private async void InizializzaAudio()
         {
             try
@@ -66,12 +72,15 @@ namespace NBADraftSimulator.Views
             if (_draftService.HaProssimaScelta())
             {
                 _staAnimando = true;
-                btnProssimaScelta.IsVisible = false;
+
+                // NASCONDI il bottone (ma mantiene lo spazio)
+                btnProssimaScelta.Opacity = 0;
+                btnProssimaScelta.IsEnabled = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
                 int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1;
                 int totaleSquadre = _squadre.Count;
-                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente; 
+                int numeroSceltaDaMostrare = totaleSquadre - sceltaCorrente;
 
                 await MostraSceltaConSuspence(squadra, numeroSceltaDaMostrare);
 
@@ -79,18 +88,32 @@ namespace NBADraftSimulator.Views
 
                 if (_draftService.HaProssimaScelta())
                 {
-                    btnProssimaScelta.IsVisible = true;
+                    // MOSTRA il bottone
+                    btnProssimaScelta.Opacity = 1;
+                    btnProssimaScelta.IsEnabled = true;
                     int prossimoNumeroDaMostrare = totaleSquadre - (sceltaCorrente + 1);
-                    lblNumeroScelta.Text = $"PICK #{prossimoNumeroDaMostrare}";
                 }
                 else
                 {
                     // Draft completato - VAI AL RIEPILOGO
+                    await Task.Delay(2000);
                     var ordineCompleto = _draftService.GetOrdineCompleto();
-                    var squadreOriginali = _squadre; // Le squadre con i pesi originali
+                    var squadreOriginali = _squadre;
 
-                    // Naviga alla pagina di riepilogo
-                    Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
+                    // Navigazione sicura sul thread principale in .NET MAUI
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        try
+                        {
+                            // Piccola pausa per lasciare completare le animazioni
+                            await Task.Delay(100);
+                            await Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Errore navigazione: {ex.Message}");
+                        }
+                    });
                 }
             }
         }
@@ -99,35 +122,44 @@ namespace NBADraftSimulator.Views
         {
             if (squadra == null) return;
 
-            // === 1. RESET UI ===
+            var isDark = Application.Current.RequestedTheme == AppTheme.Dark;
+            var coloreSquadra = Color.FromArgb(squadra.ColorePrimario);
+
+            // RESET UI
             lblAnnuncio.Opacity = 0;
             lblAnnuncio.Scale = 1;
-            lblAnnuncio.Text = $"LA SCELTA NUMERO {numeroScelta} VA A...";
-            var isDark = Application.Current.RequestedTheme == AppTheme.Dark;
+            var testoParlato = $"La scelta numero {numeroScelta} va a";
 
-            var colore = Color.FromArgb(squadra.ColorePrimario);
+            // TESTO PERSONALIZZATO PER LA PRIMA SCELTA
+            if (numeroScelta == 1)
+            {
+                lblAnnuncio.Text = $"LA PRIMA SCELTA ASSOLUTA VA A...";
+                testoParlato = $"Nicola Iòkich va a";
+            }
+            else
+            {
+                lblAnnuncio.Text = $"LA SCELTA NUMERO {numeroScelta} VA A...";
+                //testoParlato = $"Nicola Iòkich va a";
+            }
 
-            lblSquadra.TextColor = isDark
-                ? colore.WithLuminosity(0.8f)
-                : colore.WithLuminosity(0.3f);
+            lblAnnuncio.TextColor = isDark ? Colors.White : Colors.Black;
 
             imgLogo.Opacity = 0;
             imgLogo.Scale = 0.1;
             lblSquadra.Opacity = 0;
+            lblSquadra.TextColor = isDark
+                ? coloreSquadra.WithLuminosity(0.85f)
+                : coloreSquadra.WithLuminosity(0.3f);
 
-            // Assicurati che il logo temporaneo sia nascosto
             imgSquadraLogo.IsVisible = false;
 
-            // === 2. ANNUNCIO INIZIALE ===
-            _applausePlayer?.Stop();
-            await lblAnnuncio.FadeTo(1, 500);
-            await Parla($"La scelta numero {numeroScelta} va, a");
+            // Parto il TTS e il drumroll in parallelo senza bloccare le animazioni
+            _ = Parla(testoParlato);
             _drumrollPlayer?.Play();
-            
 
-            // === 3. FASE DI SUSPENSE (RULLO DI TAMBURI + COUNTDOWN) ===
-            
+            await lblAnnuncio.FadeTo(1, 400, Easing.CubicInOut);
 
+            // COUNTDOWN + flash effetto ESPN
             for (int i = 5; i > 0; i--)
             {
                 lblCountdown.Text = i.ToString();
@@ -135,85 +167,62 @@ namespace NBADraftSimulator.Views
                 lblCountdown.Scale = 0.5;
 
                 await Task.WhenAll(
-                    lblCountdown.FadeTo(1, 400),
-                    lblCountdown.ScaleTo(2.5, 400, Easing.SpringOut)
+                    lblCountdown.FadeTo(1, 350, Easing.CubicIn),
+                    lblCountdown.ScaleTo(2.5, 350, Easing.SpringOut)
                 );
 
+                // Glow/flash effetto ESPN
+                lblCountdown.TextColor = Color.FromArgb("#FFD700");
+                await Task.Delay(50);
+                lblCountdown.TextColor = Color.FromArgb("#C8102E");
+
                 await Task.WhenAll(
-                    lblCountdown.FadeTo(0, 300),
-                    lblCountdown.ScaleTo(0.5, 300)
+                    lblCountdown.FadeTo(0, 250),
+                    lblCountdown.ScaleTo(0.5, 250)
                 );
             }
 
             _drumrollPlayer?.Stop();
 
-            // === 4. MOMENTO CLIMATICO (BUZZER + LOGO SQUADRA GIGANTE) ===
+            // BUZZER + LOGO GIGANTE
             _buzzerPlayer?.Play();
+            //try { imgSquadraLogo.Source = squadra.LogoPath; }
+            //catch { imgSquadraLogo.Source = "team_default.png"; }
 
-            // Mostra il logo della squadra IN GRANDE al posto del pallone
-            try
-            {
-                imgSquadraLogo.Source = squadra.LogoPath;  // Usa il logo della squadra corrente
-            }
-            catch
-            {
-                imgSquadraLogo.Source = "team_default.png";
-            }
+            //imgSquadraLogo.IsVisible = true;
+            //imgSquadraLogo.Opacity = 0;
+            //imgSquadraLogo.Scale = 0.1;
 
-            imgSquadraLogo.Opacity = 0;
-            imgSquadraLogo.Scale = 0.1;
-            imgSquadraLogo.IsVisible = true;
-
-            // Animazione: il logo appare gigante e poi svanisce
             //await Task.WhenAll(
-            //    imgSquadraLogo.FadeTo(1, 200),
-            //    imgSquadraLogo.ScaleTo(4.0, 200, Easing.SpringOut)
+            //    imgSquadraLogo.FadeTo(0, 200),
+            //    imgSquadraLogo.ScaleTo(0.1, 200)
             //);
+            //imgSquadraLogo.IsVisible = false;
 
-            await Task.WhenAll(
-                imgSquadraLogo.FadeTo(0, 300),
-                imgSquadraLogo.ScaleTo(0.1, 300)
-            );
-
-            imgSquadraLogo.IsVisible = false;
-
-            // === 5. RESET COUNTDOWN ===
+            // RESET countdown
             lblCountdown.Text = "5";
             lblCountdown.FontSize = 72;
             lblCountdown.TextColor = Color.FromArgb("#C8102E");
 
-            // === 6. RIVELAZIONE SQUADRA ===
-            
-            // Mostra il logo normale
-            try
-            {
-                imgLogo.Source = squadra.LogoPath;
-            }
-            catch
-            {
-                imgLogo.Source = "team_default.png";
-            }
+            // RIVELAZIONE SQUADRA
+            try { imgLogo.Source = squadra.LogoPath; }
+            catch { imgLogo.Source = "team_default.png"; }
 
-            // Animazione logo normale
             await Task.WhenAll(
                 imgLogo.FadeTo(1, 600),
                 imgLogo.ScaleTo(1.2, 600, Easing.SpringOut)
             );
             await imgLogo.ScaleTo(1.0, 200);
-            
-            // Animazione nome squadra
+
             lblSquadra.Text = squadra.Nome.ToUpper();
 
             await Task.WhenAll(
                 lblSquadra.FadeTo(1, 500),
                 lblSquadra.ScaleTo(1.3, 500, Easing.SpringOut)
             );
-            
             await lblSquadra.ScaleTo(1.0, 300);
-            await Parla(squadra.Nome);
-            // === 7. FINALE ===
-            lblAnnuncio.Text = $"CON LA SCELTA #{numeroScelta}";
-            lblAnnuncio.TextColor = Color.FromArgb(squadra.ColoreSecondario);
+
+            _ = Parla(squadra.Nome);
 
             _applausePlayer?.Play();
             _ = FadeOutAudioAsync(_applausePlayer, 3000);
@@ -225,12 +234,11 @@ namespace NBADraftSimulator.Views
 
             int step = 50;
             int steps = durataMs / step;
-            double volumeIniziale = player.Volume; // <-- CAMBIATO DA float A double
+            double volumeIniziale = player.Volume;
 
             for (int i = 0; i <= steps; i++)
             {
-                double t = (double)i / steps; // <-- CAST A double
-                                              // Easing quadratico: inizia lento, poi accelera la discesa
+                double t = (double)i / steps;
                 double easing = t * t;
                 player.Volume = volumeIniziale * (1 - easing);
                 await Task.Delay(step);
@@ -246,20 +254,7 @@ namespace NBADraftSimulator.Views
             {
                 if (!string.IsNullOrWhiteSpace(testo))
                 {
-                    // Ottieni la lista delle lingue disponibili
-                    var locales = await TextToSpeech.Default.GetLocalesAsync();
-
-                    // Cerca l'italiano
-                    var italiano = locales.FirstOrDefault(l => l.Language == "it");
-
-                    var settings = new SpeechOptions
-                    {
-                        Volume = 1.0f,      // Massimo volume
-                        Pitch = 1.0f,        // Tono normale
-                        Locale = italiano    // Usa la lingua italiana se disponibile
-                    };
-
-                    await TextToSpeech.Default.SpeakAsync(testo, settings);
+                    await TextToSpeech.Default.SpeakAsync(testo);
                 }
             }
             catch (Exception ex)
@@ -268,10 +263,8 @@ namespace NBADraftSimulator.Views
             }
         }
 
-        // Gestione back button
         protected override bool OnBackButtonPressed()
         {
-            // Torna alla configurazione
             Navigation.PopAsync();
             return true;
         }

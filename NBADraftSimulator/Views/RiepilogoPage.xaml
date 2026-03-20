@@ -46,8 +46,25 @@
         <ScrollView Grid.Row="1" Margin="10">
             <VerticalStackLayout Spacing="15">
 
+                <!-- Squadra Vincente (Pick #1) -->
+                <Frame BackgroundColor="#1D428A" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="🏆 PRIMA SCELTA ASSOLUTA 🏆"
+                               TextColor="{StaticResource NBAGold}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+
+                                        <Label x:Name="lblVincitore"
+                               Text=""
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
                 <!-- Sezione Ordine Draft -->
-                <Frame Padding="15" CornerRadius="10">
+                <Frame Padding="15" CornerRadius="10" BackgroundColor="#1D428A">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="🏀 ORDINE FINALE 🏀"
                                TextColor="{StaticResource NBAGold}"
@@ -57,7 +74,7 @@
 
                         <CollectionView x:Name="cvOrdine"
                                         ItemsSource="{Binding .}"
-                                        HeightRequest="300">
+                                        HeightRequest="400">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Frame Padding="0"
@@ -72,7 +89,6 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Label Text="{Binding NumeroScelta, StringFormat='#{0}'}"
-                                                   TextColor="{StaticResource NBAGold}"
                                                    FontSize="16"
                                                    FontAttributes="Bold"
                                                    WidthRequest="40"/>
@@ -82,11 +98,6 @@
                                                    TextColor="{StaticResource TextColor}"
                                                    FontSize="16"
                                                    FontAttributes="Bold"/>
-
-                                            <Label Grid.Column="2"
-                                                   Text="{Binding PesoOriginale, StringFormat='Peso: {0}'}"
-                                                   TextColor="{StaticResource SecondaryTextColor}"
-                                                   FontSize="14"/>
                                         </Grid>
                                     </Frame>
                                 </DataTemplate>
@@ -96,7 +107,7 @@
                 </Frame>
 
                 <!-- Sezione Probabilità Iniziali -->
-                <Frame Padding="15" CornerRadius="10">
+                <Frame Padding="15" CornerRadius="10" IsVisible="False">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="📊 PROBABILITÀ INIZIALI 📊"
                                TextColor="{StaticResource NBAGold}"
@@ -142,22 +153,7 @@
                     </VerticalStackLayout>
                 </Frame>
 
-                <!-- Squadra Vincente (Pick #1) -->
-                <Frame BackgroundColor="#1D428A" Padding="15" CornerRadius="10">
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="🏆 PRIMA SCELTA ASSOLUTA 🏆"
-                               TextColor="{StaticResource NBAGold}"
-                               FontSize="16"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center"/>
-
-                        <Label x:Name="lblVincitore"
-                               Text=""
-                               FontSize="28"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
+                
             </VerticalStackLayout>
         </ScrollView>
 
