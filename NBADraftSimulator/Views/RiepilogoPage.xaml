@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NBADraftSimulator.Views.RiepilogoPage"
              Title="Draft Completato"
-             BackgroundColor="#0A0A0A">
+             BackgroundColor="{StaticResource BackgroundColor}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -65,7 +65,7 @@
 
 
                 <!-- Sezione Ordine Draft -->
-                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10">
+                <Frame BackgroundColor="{StaticResource SecondaryBackgroundColor}" Padding="15" CornerRadius="10">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="🏀 ORDINE FINALE 🏀"
                                TextColor="Gold"
@@ -116,7 +116,7 @@
                 </Frame>
 
                 <!-- Sezione Probabilità Iniziali -->
-                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10" IsVisible="False">
+                <Frame BackgroundColor="{StaticResource SecondaryBackgroundColor}" Padding="15" CornerRadius="10" IsVisible="False">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="📊 PROBABILITÀ INIZIALI 📊"
                                TextColor="Gold"
