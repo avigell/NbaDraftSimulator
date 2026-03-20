@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NBADraftSimulator.Views.RiepilogoPage"
-             Title="Draft Completato"
-             BackgroundColor="#0A0A0A">
+             Title="Draft Completato">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -12,7 +11,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header NBA -->
+        <!-- Header NBA (colori NBA fissi) -->
         <Grid BackgroundColor="#1D428A" Padding="15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -43,44 +42,25 @@
                     Clicked="OnHomeClicked"/>
         </Grid>
 
-        <!-- Contenuto principale -->
+        <!-- Contenuto principale (scrollabile) -->
         <ScrollView Grid.Row="1" Margin="10">
             <VerticalStackLayout Spacing="15">
-                <!-- Squadra Vincente (Pick #1) -->
-                <Frame BackgroundColor="#1D428A" Padding="15" CornerRadius="10">
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="🏆 PRIMA SCELTA ASSOLUTA 🏆"
-                           TextColor="Gold"
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"/>
-
-                                <Label x:Name="lblVincitore"
-                           Text=""
-                           FontSize="28"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"/> 
-                    </VerticalStackLayout>
-                </Frame>
-
 
                 <!-- Sezione Ordine Draft -->
-                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10">
+                <Frame Padding="15" CornerRadius="10">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="🏀 ORDINE FINALE 🏀"
-                               TextColor="Gold"
+                               TextColor="{StaticResource NBAGold}"
                                FontSize="20"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"/>
 
                         <CollectionView x:Name="cvOrdine"
                                         ItemsSource="{Binding .}"
-                                        HeightRequest="380">
+                                        HeightRequest="300">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <!-- CORREZIONE: CornerRadius spostato sul Frame, non sul Grid -->
-                                    <Frame Padding="0" 
-                                           BackgroundColor="#2a2a2a" 
+                                    <Frame Padding="0"
                                            Margin="0,3"
                                            CornerRadius="5"
                                            HasShadow="False">
@@ -92,21 +72,21 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Label Text="{Binding NumeroScelta, StringFormat='#{0}'}"
-                                                   TextColor="Gold"
+                                                   TextColor="{StaticResource NBAGold}"
                                                    FontSize="16"
                                                    FontAttributes="Bold"
                                                    WidthRequest="40"/>
 
                                             <Label Grid.Column="1" 
                                                    Text="{Binding Nome}"
-                                                   TextColor="White"
+                                                   TextColor="{StaticResource TextColor}"
                                                    FontSize="16"
                                                    FontAttributes="Bold"/>
 
-                                            <!--<Label Grid.Column="2"
+                                            <Label Grid.Column="2"
                                                    Text="{Binding PesoOriginale, StringFormat='Peso: {0}'}"
-                                                   TextColor="#CCCCCC"
-                                                   FontSize="14"/>-->
+                                                   TextColor="{StaticResource SecondaryTextColor}"
+                                                   FontSize="14"/>
                                         </Grid>
                                     </Frame>
                                 </DataTemplate>
@@ -116,10 +96,10 @@
                 </Frame>
 
                 <!-- Sezione Probabilità Iniziali -->
-                <Frame BackgroundColor="#1a1a1a" Padding="15" CornerRadius="10" IsVisible="False">
+                <Frame Padding="15" CornerRadius="10">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="📊 PROBABILITÀ INIZIALI 📊"
-                               TextColor="Gold"
+                               TextColor="{StaticResource NBAGold}"
                                FontSize="18"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"/>
@@ -129,9 +109,7 @@
                                         HeightRequest="250">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <!-- CORREZIONE: CornerRadius spostato sul Frame -->
                                     <Frame Padding="0"
-                                           BackgroundColor="#2a2a2a" 
                                            Margin="0,2"
                                            CornerRadius="5"
                                            HasShadow="False">
@@ -142,7 +120,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Label Text="{Binding Nome}"
-                                                   TextColor="White"
+                                                   TextColor="{StaticResource TextColor}"
                                                    FontSize="14"/>
 
                                             <Label Grid.Column="1"
@@ -158,18 +136,33 @@
 
                         <!-- Legenda -->
                         <Label Text="Più alto il peso, più probabile l'ultima scelta"
-                               TextColor="#CCCCCC"
+                               TextColor="{StaticResource SecondaryTextColor}"
                                FontSize="12"
                                HorizontalOptions="Center"/>
                     </VerticalStackLayout>
                 </Frame>
 
-                
+                <!-- Squadra Vincente (Pick #1) -->
+                <Frame BackgroundColor="#1D428A" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="🏆 PRIMA SCELTA ASSOLUTA 🏆"
+                               TextColor="{StaticResource NBAGold}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+
+                        <Label x:Name="lblVincitore"
+                               Text=""
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Bottone Nuovo Draft -->
-        <Button Grid.Row="3"
+        <!-- Bottone Nuovo Draft (colori NBA fissi) -->
+        <Button Grid.Row="2"
                 Text="🔄 NUOVO DRAFT"
                 BackgroundColor="#C8102E"
                 TextColor="White"

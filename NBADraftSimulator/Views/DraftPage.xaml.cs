@@ -103,7 +103,13 @@ namespace NBADraftSimulator.Views
             lblAnnuncio.Opacity = 0;
             lblAnnuncio.Scale = 1;
             lblAnnuncio.Text = $"LA SCELTA NUMERO {numeroScelta} VA A...";
-            lblAnnuncio.TextColor = Colors.White;
+            var isDark = Application.Current.RequestedTheme == AppTheme.Dark;
+
+            var colore = Color.FromArgb(squadra.ColorePrimario);
+
+            lblSquadra.TextColor = isDark
+                ? colore.WithLuminosity(0.8f)
+                : colore.WithLuminosity(0.3f);
 
             imgLogo.Opacity = 0;
             imgLogo.Scale = 0.1;
@@ -197,8 +203,7 @@ namespace NBADraftSimulator.Views
             
             // Animazione nome squadra
             lblSquadra.Text = squadra.Nome.ToUpper();
-            lblSquadra.TextColor = Color.FromArgb(squadra.ColorePrimario);
-            
+
             await Task.WhenAll(
                 lblSquadra.FadeTo(1, 500),
                 lblSquadra.ScaleTo(1.3, 500, Easing.SpringOut)

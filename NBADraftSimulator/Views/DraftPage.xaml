@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NBADraftSimulator.Views.DraftPage"
-             Title="NBA Draft"
-             BackgroundColor="#0A0A0A">
+             Title="NBA Draft">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -13,7 +12,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header Draft -->
+        <!-- HEADER (resta fisso NBA) -->
         <Grid BackgroundColor="#1D428A" Padding="15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -40,10 +39,11 @@
                    FontAttributes="Bold"/>
         </Grid>
 
-        <!-- Area Centrale con Animazioni -->
+        <!-- AREA CENTRALE -->
         <Grid Grid.Row="1" 
               VerticalOptions="Center"
               HorizontalOptions="Center">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -51,17 +51,16 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Testo annuncio -->
+            <!-- Annuncio (tema automatico) -->
             <Label x:Name="lblAnnuncio"
                    Text="La scelta numero 1 va a..."
-                   TextColor="White"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    Margin="0,0,0,30"
                    Opacity="0"/>
 
-            <!-- Countdown animato -->
+            <!-- Countdown -->
             <Label x:Name="lblCountdown"
                    Grid.Row="1"
                    Text="3"
@@ -72,7 +71,7 @@
                    Opacity="0"
                    Scale="0.5"/>
 
-            <!-- NUOVO: Logo temporaneo per effetto gigante (sostituisce il pallone) -->
+            <!-- Logo gigante -->
             <Image x:Name="imgSquadraLogo"
                    Grid.Row="1"
                    WidthRequest="200"
@@ -82,7 +81,7 @@
                    IsVisible="False"
                    Opacity="0"/>
 
-            <!-- Logo squadra finale -->
+            <!-- Logo finale -->
             <Image x:Name="imgLogo"
                    Grid.Row="2"
                    WidthRequest="200"
@@ -90,18 +89,17 @@
                    Margin="0,30"
                    Opacity="0"/>
 
-            <!-- Nome squadra finale -->
+            <!-- Nome squadra (tema automatico DI DEFAULT) -->
             <Label x:Name="lblSquadra"
                    Grid.Row="3"
                    Text=""
-                   TextColor="White"
                    FontSize="36"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    Opacity="0"/>
         </Grid>
 
-        <!-- Bottone prossima scelta -->
+        <!-- Bottone -->
         <Button Grid.Row="3"
                 x:Name="btnProssimaScelta"
                 Text="PROSSIMA SCELTA"
@@ -114,7 +112,7 @@
                 Clicked="OnProssimaSceltaClicked"
                 IsVisible="False"/>
 
-        <!-- Label fine draft -->
+        <!-- Fine draft -->
         <Label Grid.Row="3"
                x:Name="lblFineDraft"
                Text="🏆 DRAFT COMPLETATO 🏆"

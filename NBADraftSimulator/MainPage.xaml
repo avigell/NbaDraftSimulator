@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header NBA Style -->
+        <!-- Header NBA Style (colori NBA fissi) -->
         <Grid BackgroundColor="#1D428A" Padding="15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -48,33 +48,26 @@
                     Command="{Binding ResetCommand}"/>
         </Grid>
 
-        <!-- Istruzioni -->
+        <!-- Istruzioni (colori dinamici) -->
         <Frame Grid.Row="1" 
                Margin="10"
                Padding="10"
-               BackgroundColor="#F5F5F5"
                CornerRadius="5">
-            <Label Text="Imposta i pesi delle squadre (più alto = più probabilità prime scelte)"
-                   TextColor="#333333"
+            <Label Text="Imposta i pesi (più alto = più probabile ultima scelta) e scegli chi escludere dalla pick #1"
                    FontSize="14"
-                   HorizontalOptions="Center"/>
+                   HorizontalOptions="Center"
+                   LineBreakMode="WordWrap"/>
         </Frame>
 
         <!-- Lista Squadre -->
-        <!-- Lista Squadre - Versione Ottimizzata -->
-        <!-- Lista Squadre - Versione con nome intero e bordi visibili -->
         <CollectionView Grid.Row="2" 
-                ItemsSource="{Binding Squadre}"
-                Margin="10">
+                        ItemsSource="{Binding Squadre}"
+                        Margin="10">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Margin="5,3"  
-                        Padding="10"
-                   CornerRadius="5"
-                   HasShadow="True"
-                   HeightRequest="70"
-                   BorderColor="#CCCCCC">
-                        <!-- Aggiunto bordo visibile -->
+                    <Frame Margin="0,3" 
+                           Padding="4"
+                           HeightRequest="70">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
@@ -83,81 +76,78 @@
                                 <ColumnDefinition Width="40"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Nome squadra - ORA TUTTO VISIBILE -->
+                            <!-- Nome squadra -->
                             <Label Grid.Column="0" 
-                           Text="{Binding Nome}"
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Start"
-                           WidthRequest="110" 
-                           MaxLines="2"
-                           LineBreakMode="WordWrap"/>
+                                   Text="{Binding Nome}"
+                                   FontSize="15"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start"
+                                   MaxLines="2"
+                                   LineBreakMode="WordWrap"/>
 
                             <!-- Slider peso -->
                             <Grid Grid.Column="1" 
-      VerticalOptions="Center"
-      WidthRequest="150">
+                                  VerticalOptions="Center"
+                                  WidthRequest="150">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- MODIFICATO: Ora si aggiorna in tempo reale -->
                                 <Label Text="{Binding Peso, StringFormat='Peso: {0}'}"
-           FontSize="12"
-           HorizontalOptions="Center"/>
+                                       FontSize="12"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,-5"/>
 
                                 <Slider Grid.Row="1"
-            Minimum="1" 
-            Maximum="100"
-            Value="{Binding Peso}"
-            MinimumTrackColor="#1D428A"
-            MaximumTrackColor="#CCCCCC"
-            ThumbColor="#C8102E"/>
+                                        Minimum="1" 
+                                        Maximum="100"
+                                        Value="{Binding Peso}"
+                                        MinimumTrackColor="#1D428A"
+                                        MaximumTrackColor="#CCCCCC"
+                                        ThumbColor="#C8102E"/>
                             </Grid>
 
                             <!-- Switch per esclusione ultima scelta -->
-                                <Grid Grid.Column="2" 
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center"
-                                      RowSpacing="0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                            <Grid Grid.Column="2" 
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="Center"
+                                  RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                                    <Label Text="No #1"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               TextColor="#C8102E"
-                               HorizontalOptions="Center"
-                                           Margin="0,0,0,-10"/>
+                                <Label Text="No #1"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="#C8102E"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,-8"/>
 
-                                    <Switch Grid.Row="1"
-                                IsToggled="{Binding EscludiDaUltimaScelta}"
-                                OnColor="#C8102E"
-                                ThumbColor="#FFD700"
-                                HorizontalOptions="Center"
-                                Scale="0.9"
-                                Margin="0,0,0,0"/>
-                                </Grid>
+                                <Switch Grid.Row="1"
+                                        IsToggled="{Binding EscludiDaUltimaScelta}"
+                                        OnColor="#C8102E"
+                                        ThumbColor="#FFD700"
+                                        HorizontalOptions="Center"
+                                        Scale="0.85"/>
+                            </Grid>
 
-                                <!-- Bottone rimuovi - CENTRATO -->
-                                <Button Grid.Column="3"
-                            Text="✖"
-                            BackgroundColor="Transparent"
-                            TextColor="#FF4444"
-                            FontSize="20"
-                            FontAttributes="Bold"
-                            WidthRequest="44"
-                            HeightRequest="44"
-                            Padding="0"
-                            Margin="0"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=RimuoviSquadraCommand}"
-                            CommandParameter="{Binding .}"/>
+                            <!-- Bottone rimuovi -->
+                            <Button Grid.Column="3"
+                                    Text="✖"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#FF4444"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    WidthRequest="44"
+                                    HeightRequest="44"
+                                    Padding="0"
+                                    Margin="0"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=RimuoviSquadraCommand}"
+                                    CommandParameter="{Binding .}"/>
                         </Grid>
                     </Frame>
                 </DataTemplate>
