@@ -70,7 +70,6 @@
                 <DataTemplate>
                     <Frame Margin="0,3" 
                            Padding="8"
-                           Style="{StaticResource {x:Type Frame}}"
                            HeightRequest="70">
                         <Grid>
                             <Grid.ColumnDefinitions>

@@ -10,7 +10,7 @@
             <Color x:Key="NBARed">#C8102E</Color>
             <Color x:Key="NBAGold">#FFD700</Color>
 
-            <!-- ========== COLORI BASE ========== -->
+            <!-- ========== COLORI BASE (fissi) ========== -->
             <Color x:Key="LightBackground">#FFFFFF</Color>
             <Color x:Key="DarkBackground">#0A0A0A</Color>
             <Color x:Key="LightSecondaryBackground">#F5F5F5</Color>
@@ -22,7 +22,7 @@
             <Color x:Key="LightBorder">#E0E0E0</Color>
             <Color x:Key="DarkBorder">#333333</Color>
 
-            <!-- ========== COLORI DINAMICI ========== -->
+            <!-- ========== RISORSE DINAMICHE (AppThemeBinding) ========== -->
             <AppThemeBinding x:Key="BackgroundColor"
                              Light="{StaticResource LightBackground}"
                              Dark="{StaticResource DarkBackground}"/>
