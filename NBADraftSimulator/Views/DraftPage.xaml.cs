@@ -108,17 +108,25 @@ namespace NBADraftSimulator.Views
         {
             try
             {
-                // Disabilita il bottone per evitare click multipli
                 btnVaiAlRiepilogo.IsEnabled = false;
 
                 var ordineCompleto = _draftService.GetOrdineCompleto();
                 var squadreOriginali = _squadre;
 
-                await Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
+                if (ordineCompleto == null || ordineCompleto.Count == 0)
+                {
+                    await DisplayAlert("Errore", "Ordine vuoto", "OK");
+                    return;
+                }
+
+                // ✅ NAVIGAZIONE CORRETTA CON SHELL
+                await Shell.Current.Navigation.PushAsync(
+                    new RiepilogoPage(ordineCompleto, squadreOriginali)
+                );
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Errore navigazione riepilogo: {ex.Message}");
+                await DisplayAlert("Errore", ex.ToString(), "OK");
             }
             finally
             {

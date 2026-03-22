@@ -53,7 +53,7 @@
                Margin="10"
                Padding="10"
                CornerRadius="5">
-            <Label Text="Imposta i pesi (più alto = più probabile ultima scelta) e scegli chi escludere dalla pick #1"
+            <Label Text="Imposta i pesi (più alto = più probabile la prima scelta) e scegli chi escludere dalla pick #1"
                    FontSize="14"
                    HorizontalOptions="Center"
                    LineBreakMode="WordWrap"/>

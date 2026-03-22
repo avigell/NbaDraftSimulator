@@ -147,7 +147,6 @@
 
                         <!-- Legenda -->
                         <Label Text="Più alto il peso, più probabile l'ultima scelta"
-                               TextColor="{StaticResource SecondaryTextColor}"
                                FontSize="12"
                                HorizontalOptions="Center"/>
                     </VerticalStackLayout>
