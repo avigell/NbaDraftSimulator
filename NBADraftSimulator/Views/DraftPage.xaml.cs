@@ -12,6 +12,9 @@ namespace NBADraftSimulator.Views
         private List<Squadra> _squadre;
         private bool _staAnimando = false;
 
+        private List<Squadra> _ordineCompleto;
+        private List<Squadra> _squadreOriginali;
+
         // Audio
         private IAudioPlayer _drumrollPlayer;
         private IAudioPlayer _applausePlayer;
@@ -38,7 +41,8 @@ namespace NBADraftSimulator.Views
             // Inizializza UI - il bottone è sempre visibile (opacity 1)
             btnProssimaScelta.Opacity = 1;
             btnProssimaScelta.IsEnabled = true;
-            lblFineDraft.Opacity = 0;
+            btnVaiAlRiepilogo.Opacity = 0;
+            btnVaiAlRiepilogo.IsEnabled = false;
 
             // Inizializza audio
             InizializzaAudio();
@@ -95,30 +99,44 @@ namespace NBADraftSimulator.Views
                 }
                 else
                 {
-                    // Draft completato - VAI AL RIEPILOGO
-                    await Task.Delay(2000);
-                    var ordineCompleto = _draftService.GetOrdineCompleto();
-                    var squadreOriginali = _squadre;
+                    // Draft completato - memorizza i dati per il riepilogo
+                    _ordineCompleto = _draftService.GetOrdineCompleto();
+                    _squadreOriginali = _squadre;
 
-                    // Navigazione sicura sul thread principale in .NET MAUI
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                    {
-                        try
-                        {
-                            // Piccola pausa per lasciare completare le animazioni
-                            await Task.Delay(100);
-                            await Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Errore navigazione: {ex.Message}");
-                        }
-                    });
+                    // NASCONDI il bottone "PROSSIMA SCELTA"
+                    btnProssimaScelta.Opacity = 0;
+                    btnProssimaScelta.IsEnabled = false;
+
+                    // MOSTRA il bottone "RIEPILOGO DRAFT"
+                    btnVaiAlRiepilogo.Opacity = 1;
+                    btnVaiAlRiepilogo.IsEnabled = true;
                 }
             }
         }
-        private async void OnVaiAlRiepilogo(object sender, EventArgs e)
-        { 
+
+        private async void OnVaiAlRiepilogoClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                // Disabilita il bottone per evitare click multipli
+                btnVaiAlRiepilogo.IsEnabled = false;
+
+                // Naviga alla pagina di riepilogo
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await Navigation.PushAsync(new RiepilogoPage(_ordineCompleto, _squadreOriginali));
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Errore navigazione riepilogo: {ex.Message}");
+                // Fallback: tenta la navigazione diretta
+                await Navigation.PushAsync(new RiepilogoPage(_ordineCompleto, _squadreOriginali));
+            }
+            finally
+            {
+                btnVaiAlRiepilogo.IsEnabled = true;
+            }
         }
 
         private async Task MostraSceltaConSuspence(Squadra squadra, int numeroScelta)

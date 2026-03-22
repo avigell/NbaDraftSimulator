@@ -115,7 +115,7 @@
                 FontAttributes="Bold"
                 CornerRadius="0"
                 HeightRequest="70"
-                Clicked="OnVaiAlRiepilogo"
+                Clicked="OnVaiAlRiepilogoClicked"
                 Opacity="1"/>
     </Grid>
 </ContentPage>
