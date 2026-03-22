@@ -117,6 +117,9 @@ namespace NBADraftSimulator.Views
                 }
             }
         }
+        private async void OnVaiAlRiepilogo(object sender, EventArgs e)
+        { 
+        }
 
         private async Task MostraSceltaConSuspence(Squadra squadra, int numeroScelta)
         {
