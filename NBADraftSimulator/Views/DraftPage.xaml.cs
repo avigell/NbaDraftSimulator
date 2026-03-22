@@ -39,10 +39,8 @@ namespace NBADraftSimulator.Views
             _draftService.InizializzaDraft(_squadre);
 
             // Inizializza UI - il bottone è sempre visibile (opacity 1)
-            btnProssimaScelta.Opacity = 1;
-            btnProssimaScelta.IsEnabled = true;
-            btnVaiAlRiepilogo.Opacity = 0;
-            btnVaiAlRiepilogo.IsEnabled = false;
+            btnProssimaScelta.IsVisible = true;
+            btnVaiAlRiepilogo.IsVisible = false;
 
             // Inizializza audio
             InizializzaAudio();
@@ -77,9 +75,8 @@ namespace NBADraftSimulator.Views
             {
                 _staAnimando = true;
 
-                // NASCONDI il bottone (ma mantiene lo spazio)
-                btnProssimaScelta.Opacity = 0;
-                btnProssimaScelta.IsEnabled = false;
+                // NASCONDI il bottone durante l'animazione
+                btnProssimaScelta.IsVisible = false;
 
                 var squadra = _draftService.EstraiProssimaScelta();
                 int sceltaCorrente = _draftService.NumeroSceltaCorrente - 1;
@@ -92,24 +89,17 @@ namespace NBADraftSimulator.Views
 
                 if (_draftService.HaProssimaScelta())
                 {
-                    // MOSTRA il bottone
-                    btnProssimaScelta.Opacity = 1;
-                    btnProssimaScelta.IsEnabled = true;
+                    // MOSTRA il bottone per la prossima scelta
+                    btnProssimaScelta.IsVisible = true;
                     int prossimoNumeroDaMostrare = totaleSquadre - (sceltaCorrente + 1);
                 }
                 else
                 {
-                    // Draft completato - memorizza i dati per il riepilogo
-                    _ordineCompleto = _draftService.GetOrdineCompleto();
-                    _squadreOriginali = _squadre;
-
-                    // NASCONDI il bottone "PROSSIMA SCELTA"
-                    btnProssimaScelta.Opacity = 0;
-                    btnProssimaScelta.IsEnabled = false;
+                    // Draft completato - NASCONDI il bottone "PROSSIMA SCELTA"
+                    btnProssimaScelta.IsVisible = false;
 
                     // MOSTRA il bottone "RIEPILOGO DRAFT"
-                    btnVaiAlRiepilogo.Opacity = 1;
-                    btnVaiAlRiepilogo.IsEnabled = true;
+                    btnVaiAlRiepilogo.IsVisible = true;
                 }
             }
         }
@@ -121,17 +111,14 @@ namespace NBADraftSimulator.Views
                 // Disabilita il bottone per evitare click multipli
                 btnVaiAlRiepilogo.IsEnabled = false;
 
-                // Naviga alla pagina di riepilogo
-                await MainThread.InvokeOnMainThreadAsync(async () =>
-                {
-                    await Navigation.PushAsync(new RiepilogoPage(_ordineCompleto, _squadreOriginali));
-                });
+                var ordineCompleto = _draftService.GetOrdineCompleto();
+                var squadreOriginali = _squadre;
+
+                await Navigation.PushAsync(new RiepilogoPage(ordineCompleto, squadreOriginali));
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Errore navigazione riepilogo: {ex.Message}");
-                // Fallback: tenta la navigazione diretta
-                await Navigation.PushAsync(new RiepilogoPage(_ordineCompleto, _squadreOriginali));
             }
             finally
             {

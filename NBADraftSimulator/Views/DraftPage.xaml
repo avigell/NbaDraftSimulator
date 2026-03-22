@@ -93,29 +93,31 @@
                    Opacity="0"/>
         </Grid>
 
-        <!-- Bottone - sempre presente, visibilità gestita con Opacity -->
-        <Button Grid.Row="3"
-                x:Name="btnProssimaScelta"
-                Text="PROSSIMA SCELTA"
-                BackgroundColor="#C8102E"
-                TextColor="White"
-                FontSize="20"
-                FontAttributes="Bold"
-                CornerRadius="0"
-                HeightRequest="70"
-                Clicked="OnProssimaSceltaClicked"
-                Opacity="1"/>
+        <!-- FOOTER - un solo contenitore con i due bottoni che si alternano -->
+        <Grid Grid.Row="2" HeightRequest="70">
+            <!-- Bottone prossima scelta -->
+            <Button x:Name="btnProssimaScelta"
+                    Text="PROSSIMA SCELTA"
+                    BackgroundColor="#C8102E"
+                    TextColor="White"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    CornerRadius="0"
+                    HeightRequest="70"
+                    Clicked="OnProssimaSceltaClicked"
+                    IsVisible="True"/>
 
-        <Button Grid.Row="3"
-                x:Name="btnVaiAlRiepilogo"
-                Text="🏆 RIEPILOGO DRAFT 🏆"
-                BackgroundColor="#C8102E"
-                TextColor="White"
-                FontSize="20"
-                FontAttributes="Bold"
-                CornerRadius="0"
-                HeightRequest="70"
-                Clicked="OnVaiAlRiepilogoClicked"
-                Opacity="1"/>
+            <!-- Bottone riepilogo -->
+            <Button x:Name="btnVaiAlRiepilogo"
+                    Text="🏆 RIEPILOGO DRAFT 🏆"
+                    BackgroundColor="#C8102E"
+                    TextColor="White"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    CornerRadius="0"
+                    HeightRequest="70"
+                    Clicked="OnVaiAlRiepilogoClicked"
+                    IsVisible="False"/>
+        </Grid>
     </Grid>
 </ContentPage>
